@@ -5,7 +5,7 @@
 Initialize the project recursively to pull in the required submodules.
 
 ```
-> git clone --recursive
+> git clone --recurse-submodules
 ```
 
 Open each `.scad` file with [OpenSCAD](https://www.openscad.org/), then:
