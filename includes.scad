@@ -11,7 +11,6 @@ postWidth = 4;
 
 // how thick the enclosure walls are
 wallWidth = 4;
-lidHeight = 0; // TODO design the lid
 
 // calculate the size of the enclosure based on the keycap widths
 encWidth = (wallWidth * 2) + (keycapWidth * keyCount) + (wallWidth * 2);

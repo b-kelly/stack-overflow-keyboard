@@ -42,6 +42,6 @@ translate([wallWidth + postWidth, wallWidth + postWidth, wallWidth])
         x = (keycapWidth / 2);
         y = (keycapWidth * i) + (keycapWidth / 2);
         translate([x, y, 0])
-            post(encHeight + switchStemHeight + lidHeight);
+            post(encHeight + switchStemHeight);
     }
 }
