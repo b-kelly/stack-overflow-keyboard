@@ -1,5 +1,3 @@
-include <./includes.scad>
-
 $fn=100;
 
 // how many keys our keyboard has
@@ -11,12 +9,27 @@ switchHeight = 14;
 switchStemHeight = 4;
 postWidth = 4;
 
+// how far apart to space the caps
+spaceBetweenCaps = 1;
+
+// distance from the keycaps to the walls
+distanceFromWalls = 2;
+
 // how thick the enclosure walls are
 wallWidth = 4;
 
 // calculate the size of the enclosure based on the keycap widths
-encWidth = (wallWidth * 2) + (keycapWidth * keyCount) + (wallWidth * 2);
-encLength = (wallWidth * 2) + keycapWidth + (wallWidth * 2);
+encWidth =
+    (wallWidth * 2) // two walls
+    + (keycapWidth * keyCount) // n keys that are w wide
+    + (spaceBetweenCaps * (keyCount - 1)) // the space between each key, not including the end keys
+    + (distanceFromWalls * 2); // distance between the walls and the caps on each end
+
+encLength =
+    (wallWidth * 2) // two walls
+    + keycapWidth // the "height" of the square keycap
+    + (distanceFromWalls * 2); // distance between the walls and the cap
+
 encHeight = switchHeight + wallWidth;
 
 module rrect(d, x, y, h=1)
@@ -70,13 +83,17 @@ difference()
 }
 
 // keep the math simple inside, center the posts here
-translate([wallWidth + postWidth, wallWidth + postWidth, wallWidth])
+translate([wallWidth, wallWidth, wallWidth])
 {
     for (i = [0:(keyCount-1)])
     {
-        x = (keycapWidth / 2);
-        y = (keycapWidth * i) + (keycapWidth / 2);
+        x = distanceFromWalls + (keycapWidth / 2);
+        y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
+
         translate([x, y, 0])
             post(encHeight + switchStemHeight);
+
+        // add in a dummy keycap for visual debugging purposes
+        %translate([x, y, switchStemHeight + (keycapWidth / 2)]) cube(keycapWidth, center=true);
     }
 }
