@@ -50,19 +50,26 @@ module rrect(d, x, y, h=1)
 
 module post(h)
 {
+    // these posts are decorational only, so don't design them to be a flush fit
+    // if you do, you run the risk of the post breaking off inside the cap (ask me how I know...)
+
     x = postWidth;
-    y = postWidth / 4;
+    y = (postWidth / 4) - 0.2;
+
     xh = x / 2;
     yh = y / 2;
     translate([-xh, -yh, 0])
     {
         cube([x, y, h]);
-        translate([xh - yh, yh - xh, 0]) cube([y, x, h]);
+        // flush fit means two posts, but... yeah
+        //translate([xh - yh, yh - xh, 0]) cube([y, x, h]);
     }
+    // reinforce the post base
+    reinforcementWidth = postWidth * 1.5;
+    cylinder(h - switchStemHeight, d=reinforcementWidth);
 }
 
 // draw the enclosure
-
 difference()
 {
     difference()
@@ -82,18 +89,23 @@ difference()
         import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
 }
 
-// keep the math simple inside, center the posts here
-translate([wallWidth, wallWidth, wallWidth])
+// simplify the internal math a bit, account for the wall/floor heights
+translate([wallWidth, wallWidth, 0])
 {
     for (i = [0:(keyCount-1)])
     {
         x = distanceFromWalls + (keycapWidth / 2);
         y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
 
+        postHeight =
+            encHeight // the height of the enclosure
+            + switchStemHeight; // the extra height that sticks into the cap
+
         translate([x, y, 0])
-            post(encHeight + switchStemHeight);
+            post(postHeight);
 
         // add in a dummy keycap for visual debugging purposes
-        %translate([x, y, switchStemHeight + (keycapWidth / 2)]) cube(keycapWidth, center=true);
+        %translate([x - keycapWidth / 2, y - keycapWidth / 2, postHeight - switchStemHeight])
+            cube([keycapWidth, keycapWidth, switchStemHeight]);
     }
 }
