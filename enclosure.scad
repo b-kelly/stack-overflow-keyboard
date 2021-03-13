@@ -72,10 +72,10 @@ module post(h)
 // draw the enclosure
 difference()
 {
+    mod = wallWidth * 2;
+
     difference()
     {
-        mod = wallWidth * 2;
-
         rrect(10, encLength, encWidth, encHeight);
         translate([wallWidth, wallWidth, wallWidth])
             rrect(10, encLength-mod, encWidth-mod, encHeight);
@@ -84,8 +84,8 @@ difference()
     imgDepth = wallWidth / 2;
     translate([encLength - imgDepth, encWidth / 2, encHeight / 2])
         rotate([90, 0, 90])
-        scale([1, 1, encHeight / 2])
-        linear_extrude(imgDepth)
+        resize([encWidth - mod, 0, 0], auto=[true,true,false])
+        linear_extrude(imgDepth + 1)
         import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
 }
 
