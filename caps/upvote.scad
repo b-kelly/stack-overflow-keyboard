@@ -2,7 +2,7 @@ include <../KeyV2/includes.scad>
 
 difference()
 {
-    cherry() key(inset=true)
+    rounded_cherry() key(inset=true)
     {
         translate([0, 0, -0.5])
         linear_extrude(3)

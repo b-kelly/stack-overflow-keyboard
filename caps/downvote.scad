@@ -1,7 +1,7 @@
 include <../KeyV2/includes.scad>
 
 $font_size=3;
-cherry() front_legend("[dup]") key(inset=true)
+rounded_cherry() front_legend("[dup]") key(inset=true)
 {
     translate([0, 0, -0.5])
     linear_extrude(3)
