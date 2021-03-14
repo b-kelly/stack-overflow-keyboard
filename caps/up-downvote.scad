@@ -1,5 +1,7 @@
 include <../KeyV2/includes.scad>
 
+$font_size=3;
+
 difference()
 {
     rounded_cherry() key(inset=true)
@@ -17,3 +19,10 @@ difference()
         import("../Stacks-Icons/src/Icon/Bookmark.svg", center=true);
     }
 }
+
+translate_u(1) rounded_cherry() front_legend("[dup]") key(inset=true)
+{
+    translate([0, 0, -0.5])
+    linear_extrude(3)
+    import("../Stacks-Icons/src/Icon/ArrowDown.svg", center=true);
+};
