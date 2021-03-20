@@ -4,6 +4,7 @@ includePosts = false;
 includeEnclosure = true;
 includeSwitchInsert = true;
 includeFaceplate = true;
+cutOutFaceplate = true;
 
 // number of keys are in a single row
 columnCount = 3;
@@ -144,7 +145,7 @@ difference()
         microUsbCutout();
 
     // cut out the front plate so we can print it separately
-    if (includeFaceplate)
+    if (includeFaceplate || cutOutFaceplate)
     translate([encWidth - wallWidth, wallWidth * 2, 0])
         rotate([0, 0, 0])
         facePlate(false);
