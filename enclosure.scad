@@ -7,6 +7,9 @@ keyCount = 3;
 keycapWidth = 18;
 switchHeight = 14;
 switchStemHeight = 4;
+
+// post settings
+includePosts = false;
 postWidth = 4;
 
 // how far apart to space the caps
@@ -16,7 +19,7 @@ spaceBetweenCaps = 1;
 distanceFromWalls = 2;
 
 // how thick the enclosure walls are
-wallWidth = 4;
+wallWidth = 2;
 
 // calculate the size of the enclosure based on the keycap widths
 encWidth =
@@ -69,6 +72,15 @@ module post(h)
     cylinder(h - switchStemHeight, d=reinforcementWidth);
 }
 
+module microUsbCutout(depth = wallWidth)
+{
+    width = 7.40;
+    height = 2.40;
+
+    translate([width / -2, 0, 0])
+        cube([width, depth, height]);
+}
+
 // draw the enclosure
 difference()
 {
@@ -87,25 +99,32 @@ difference()
         resize([encWidth - mod, 0, 0], auto=[true,true,false])
         linear_extrude(imgDepth + 1)
         import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
+
+    pcbHeight = 1.6;
+    translate([(encLength / 2), 0, wallWidth + pcbHeight])
+        microUsbCutout();
 }
 
-// simplify the internal math a bit, account for the wall/floor heights
-translate([wallWidth, wallWidth, 0])
+if (includePosts)
 {
-    for (i = [0:(keyCount-1)])
+    // simplify the internal math a bit, account for the wall/floor heights
+    translate([wallWidth, wallWidth, 0])
     {
-        x = distanceFromWalls + (keycapWidth / 2);
-        y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
+        for (i = [0:(keyCount-1)])
+        {
+            x = distanceFromWalls + (keycapWidth / 2);
+            y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
 
-        postHeight =
-            encHeight // the height of the enclosure
-            + switchStemHeight; // the extra height that sticks into the cap
+            postHeight =
+                encHeight // the height of the enclosure
+                + switchStemHeight; // the extra height that sticks into the cap
 
-        translate([x, y, 0])
-            post(postHeight);
+            translate([x, y, 0])
+                post(postHeight);
 
-        // add in a dummy keycap for visual debugging purposes
-        %translate([x - keycapWidth / 2, y - keycapWidth / 2, postHeight - switchStemHeight])
-            cube([keycapWidth, keycapWidth, switchStemHeight]);
+            // add in a dummy keycap for visual debugging purposes
+            %translate([x - keycapWidth / 2, y - keycapWidth / 2, postHeight - switchStemHeight])
+                cube([keycapWidth, keycapWidth, switchStemHeight]);
+        }
     }
 }
