@@ -32,6 +32,13 @@ cornerCurveRadius = 5;
 // the path to the faceplate image
 logoPath = "./Stacks-Icons/src/Icon/Logo.svg";
 
+// TODO there's probably a better way to detect and constrain dynamically, but I'm being lazy here
+// whether to fit the logo to the width or to the height
+fitLogoToLength = true;
+
+// additional height to add to the enclosure to account for electronics, etc
+additionalEnclosureHeight = 5;
+
 // calculate the size of the enclosure based on the keycap widths
 encLength =
     (wallWidth * 2) // two walls
@@ -45,7 +52,7 @@ encWidth =
     + (spaceBetweenCaps * (rowCount - 1)) // the space between each key, not including the end keys
     + (distanceFromWalls * 2); // distance between the walls and the cap
 
-encHeight = switchHeight + wallWidth;
+encHeight = switchHeight + wallWidth + additionalEnclosureHeight;
 
 facePlateLength = encLength - (wallWidth * 2) - cornerCurveRadius;
 
@@ -108,10 +115,13 @@ module facePlate(includeImage = true)
                 
             if (includeImage)
             {
+                lengthResize = fitLogoToLength ? facePlateLength - wallWidth : 0;
+                heightResize = fitLogoToLength ? 0 : encHeight - wallWidth;
+
                 imgDepth = 0.5;
                 translate([imgDepth, facePlateLength / 2, encHeight / 2])
                     rotate([90, 0, 90])
-                    resize([0, encHeight - wallWidth, 0], auto=[true,true,false])
+                    resize([lengthResize, heightResize, 0], auto=[true,true,false])
                     linear_extrude(imgDepth + 1)
                     import(logoPath, center=true);
             }
