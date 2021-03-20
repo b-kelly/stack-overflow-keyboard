@@ -98,7 +98,7 @@ difference()
     imgDepth = 0.5;
     translate([encLength - imgDepth, encWidth / 2, encHeight / 2])
         rotate([90, 0, 90])
-        resize([encWidth - mod, 0, 0], auto=[true,true,false])
+        resize([encWidth - mod - cornerCurveRadius, 0, 0], auto=[true,true,false])
         linear_extrude(imgDepth + 1)
         import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
 }
