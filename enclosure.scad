@@ -85,24 +85,21 @@ module microUsbCutout(depth = wallWidth)
 difference()
 {
     mod = wallWidth * 2;
+    
+    rrect(10, encLength, encWidth, encHeight);
+    translate([wallWidth, wallWidth, wallWidth])
+        rrect(10, encLength-mod, encWidth-mod, encHeight);
 
-    difference()
-    {
-        rrect(10, encLength, encWidth, encHeight);
-        translate([wallWidth, wallWidth, wallWidth])
-            rrect(10, encLength-mod, encWidth-mod, encHeight);
-    }
+    pcbHeight = 1.6;
+    translate([(encLength / 2), 0, wallWidth + pcbHeight])
+        microUsbCutout();
 
-    imgDepth = wallWidth / 2;
+    imgDepth = 0.5;
     translate([encLength - imgDepth, encWidth / 2, encHeight / 2])
         rotate([90, 0, 90])
         resize([encWidth - mod, 0, 0], auto=[true,true,false])
         linear_extrude(imgDepth + 1)
         import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
-
-    pcbHeight = 1.6;
-    translate([(encLength / 2), 0, wallWidth + pcbHeight])
-        microUsbCutout();
 }
 
 if (includePosts)
