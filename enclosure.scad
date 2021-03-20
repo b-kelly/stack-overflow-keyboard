@@ -14,9 +14,6 @@ switchHeight = 14;
 switchWidth = 14.5;//15.6;
 switchStemHeight = 4;
 
-// post settings
-postWidth = 4;
-
 // how far apart to space the caps
 spaceBetweenCaps = 1;
 
@@ -30,20 +27,20 @@ wallWidth = 2;
 cornerCurveRadius = 5;
 
 // calculate the size of the enclosure based on the keycap widths
-encWidth =
+encLength =
     (wallWidth * 2) // two walls
     + (keycapWidth * keyCount) // n keys that are w wide
     + (spaceBetweenCaps * (keyCount - 1)) // the space between each key, not including the end keys
     + (distanceFromWalls * 2); // distance between the walls and the caps on each end
 
-encLength =
+encWidth =
     (wallWidth * 2) // two walls
-    + keycapWidth // the "height" of the square keycap
+    + keycapWidth // the width of the square keycap
     + (distanceFromWalls * 2); // distance between the walls and the cap
 
 encHeight = switchHeight + wallWidth;
 
-facePlateWidth = encWidth - (wallWidth * 2) - cornerCurveRadius;
+facePlateWidth = encLength - (wallWidth * 2) - cornerCurveRadius;
 
 module rrect(r, x, y, h=1)
 {
@@ -63,6 +60,8 @@ module rrect(r, x, y, h=1)
 
 module post(h)
 {
+    postWidth = 4;
+
     // these posts are decorational only, so don't design them to be a flush fit
     // if you do, you run the risk of the post breaking off inside the cap (ask me how I know...)
 
@@ -119,17 +118,17 @@ difference()
 {
     mod = wallWidth * 2;
     
-    rrect(cornerCurveRadius, encLength, encWidth, encHeight);
+    rrect(cornerCurveRadius, encWidth, encLength, encHeight);
     translate([wallWidth, wallWidth, wallWidth])
-        rrect(cornerCurveRadius, encLength-mod, encWidth-mod, encHeight);
+        rrect(cornerCurveRadius, encWidth - mod, encLength-mod, encHeight);
 
     pcbHeight = 1.6;
-    translate([(encLength / 2), 0, wallWidth + pcbHeight])
+    translate([(encWidth / 2), 0, wallWidth + pcbHeight])
         microUsbCutout();
 
     // cut out the front plate so we can print it separately
     if (includeFaceplate)
-    translate([encLength - wallWidth, wallWidth * 2, 0])
+    translate([encWidth - wallWidth, wallWidth * 2, 0])
         rotate([0, 0, 0])
         facePlate(false);
 }
@@ -161,7 +160,7 @@ if (includeSwitchInsert)
 translate([encHeight * 2, 0, 0])
 difference() {
     mod = wallWidth * 2;
-    rrect(cornerCurveRadius, encLength - mod, encWidth - mod, 5);
+    rrect(cornerCurveRadius, encWidth - mod, encLength - mod, 5);
 
     for (i = [0:(keyCount-1)])
     {
