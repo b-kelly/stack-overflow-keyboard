@@ -5,8 +5,11 @@ includeEnclosure = true;
 includeSwitchInsert = true;
 includeFaceplate = true;
 
-// how many keys our keyboard has
-keyCount = 3;
+// number of keys are in a single row
+columnCount = 3;
+
+// number of rows of keys to add
+rowCount = 1;
 
 // measurements of a cherry mx switch / keycap
 keycapWidth = 18;
@@ -26,16 +29,20 @@ wallWidth = 2;
 // the corner radius
 cornerCurveRadius = 5;
 
+// where we should the load logo from
+logoPath = "./Stacks-Icons/src/Icon/Logo.svg";
+
 // calculate the size of the enclosure based on the keycap widths
 encLength =
     (wallWidth * 2) // two walls
-    + (keycapWidth * keyCount) // n keys that are w wide
-    + (spaceBetweenCaps * (keyCount - 1)) // the space between each key, not including the end keys
+    + (keycapWidth * columnCount) // n keys that are w wide
+    + (spaceBetweenCaps * (columnCount - 1)) // the space between each key, not including the end keys
     + (distanceFromWalls * 2); // distance between the walls and the caps on each end
 
 encWidth =
     (wallWidth * 2) // two walls
-    + keycapWidth // the width of the square keycap
+    + (keycapWidth * rowCount) // n keys that are w wide
+    + (spaceBetweenCaps * (rowCount - 1)) // the space between each key, not including the end keys
     + (distanceFromWalls * 2); // distance between the walls and the cap
 
 encHeight = switchHeight + wallWidth;
@@ -106,7 +113,7 @@ module facePlate(includeImage = true)
                     rotate([90, 0, 90])
                     resize([facePlateWidth - wallWidth, 0, 0], auto=[true,true,false])
                     #linear_extrude(imgDepth + 1)
-                    import("./Stacks-Icons/src/Icon/Logo.svg", center=true);
+                    import(logoPath, center=true);
             }
         }
     }
@@ -137,43 +144,49 @@ if (includePosts)
 // simplify the internal math a bit, account for the wall/floor heights
 translate([wallWidth, wallWidth, 0])
 {
-    for (i = [0:(keyCount-1)])
+    for (i = [0:(columnCount-1)])
     {
-        x = distanceFromWalls + (keycapWidth / 2);
-        y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
+        for (j = [0:(rowCount-1)])
+        {
+            x = (keycapWidth * j) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * j);
+            y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
 
-        postHeight =
-            encHeight // the height of the enclosure
-            + switchStemHeight; // the extra height that sticks into the cap
+            postHeight =
+                encHeight // the height of the enclosure
+                + switchStemHeight; // the extra height that sticks into the cap
 
-        translate([x, y, 0])
-            post(postHeight);
+            translate([x, y, 0])
+                post(postHeight);
 
-        // add in a dummy keycap for visual debugging purposes
-        %translate([x, y, postHeight - switchStemHeight / 2])
-            cube([keycapWidth, keycapWidth, switchStemHeight], center=true);
+            // add in a dummy keycap for visual debugging purposes
+            %translate([x, y, postHeight - switchStemHeight / 2])
+                cube([keycapWidth, keycapWidth, switchStemHeight], center=true);
+        }
     }
 }
 
 // create a structure inside the enclosure that the switches can attach to
 if (includeSwitchInsert)
-translate([encHeight * 2, 0, 0])
+translate([encWidth + 5, 0, 0])
 difference() {
     mod = wallWidth * 2;
     rrect(cornerCurveRadius, encWidth - mod, encLength - mod, 5);
 
-    for (i = [0:(keyCount-1)])
+    for (i = [0:(columnCount-1)])
     {
-        x = distanceFromWalls + (keycapWidth / 2);
-        y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
+        for (j = [0:(rowCount-1)])
+        {
+            x = (keycapWidth * j) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * j);
+            y = (keycapWidth * i) + (keycapWidth / 2) + distanceFromWalls + (spaceBetweenCaps * i);
 
-        translate([x, y, 0])
-            cube([switchWidth, switchWidth, 10], center=true);
+            translate([x, y, 0])
+                cube([switchWidth, switchWidth, 10], center=true);
+        }
     }
 }
 
 // add the faceplate, rotated on its back for easy printing
 if (includeFaceplate)
-translate([encHeight * 5, 0, 0])
+translate([(encWidth * 2) + 5 + encHeight, 0, 0])
     rotate([0, -90, 0])
     facePlate();
