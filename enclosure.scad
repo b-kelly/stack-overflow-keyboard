@@ -35,9 +35,9 @@ encLength =
 
 encHeight = switchHeight + wallWidth;
 
-module rrect(d, x, y, h=1)
+module rrect(r, x, y, h=1)
 {
-    r = d / 2;
+    d = r * 2;
     tl = x - d;
     tw = y - d;
     translate([r, r, 0]) {
@@ -85,10 +85,11 @@ module microUsbCutout(depth = wallWidth)
 difference()
 {
     mod = wallWidth * 2;
+    cornerCurveRadius = 5;
     
-    rrect(10, encLength, encWidth, encHeight);
+    rrect(cornerCurveRadius, encLength, encWidth, encHeight);
     translate([wallWidth, wallWidth, wallWidth])
-        rrect(10, encLength-mod, encWidth-mod, encHeight);
+        rrect(cornerCurveRadius, encLength-mod, encWidth-mod, encHeight);
 
     pcbHeight = 1.6;
     translate([(encLength / 2), 0, wallWidth + pcbHeight])
