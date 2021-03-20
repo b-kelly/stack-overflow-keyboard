@@ -29,7 +29,7 @@ wallWidth = 2;
 // the corner radius
 cornerCurveRadius = 5;
 
-// where we should the load logo from
+// the path to the faceplate image
 logoPath = "./Stacks-Icons/src/Icon/Logo.svg";
 
 // calculate the size of the enclosure based on the keycap widths
@@ -47,7 +47,7 @@ encWidth =
 
 encHeight = switchHeight + wallWidth;
 
-facePlateWidth = encLength - (wallWidth * 2) - cornerCurveRadius;
+facePlateLength = encLength - (wallWidth * 2) - cornerCurveRadius;
 
 module rrect(r, x, y, h=1)
 {
@@ -101,18 +101,18 @@ module facePlate(includeImage = true)
 {
     translate([0, wallWidth / 2, 0]) {
         translate([0, wallWidth / -2, 0])
-            #cube([wallWidth / 2, facePlateWidth + wallWidth, encHeight]);
+            #cube([wallWidth / 2, facePlateLength + wallWidth, encHeight]);
 
         difference() {
-            cube([wallWidth, facePlateWidth, encHeight]);
+            cube([wallWidth, facePlateLength, encHeight]);
                 
             if (includeImage)
             {
                 imgDepth = 0.5;
-                translate([imgDepth, facePlateWidth / 2, encHeight / 2])
+                translate([imgDepth, facePlateLength / 2, encHeight / 2])
                     rotate([90, 0, 90])
-                    resize([facePlateWidth - wallWidth, 0, 0], auto=[true,true,false])
-                    #linear_extrude(imgDepth + 1)
+                    resize([0, encHeight - wallWidth, 0], auto=[true,true,false])
+                    linear_extrude(imgDepth + 1)
                     import(logoPath, center=true);
             }
         }
