@@ -38,7 +38,7 @@ logoPath = "./Stacks-Icons/src/Icon/Logo.svg";
 fitLogoToLength = true;
 
 // how deep to imprint the image into the faceplate
-imgDepth = 0.24;
+imgDepth = 0.25;
 
 // additional height to add to the enclosure to account for electronics, etc
 additionalEnclosureHeight = 5;
@@ -120,6 +120,17 @@ module pcb(height = pcbHeight) {
     #cube([pcbWidth, pcbLength, height]);
 }
 
+module logo()
+{
+    lengthResize = fitLogoToLength ? facePlateLength - wallWidth : 0;
+    heightResize = fitLogoToLength ? 0 : encHeight - wallWidth;
+
+    rotate([90, 0, 90])
+    resize([lengthResize, heightResize, 0], auto=[true,true,false])
+    linear_extrude(imgDepth)
+    import(logoPath, center=true);
+}
+
 module facePlate(includeImage = true)
 {
     translate([0, wallWidth / 2, 0]) {
@@ -132,10 +143,7 @@ module facePlate(includeImage = true)
                 heightResize = fitLogoToLength ? 0 : encHeight - wallWidth;
 
                 translate([wallWidth - imgDepth, facePlateLength / 2, encHeight / 2])
-                    rotate([90, 0, 90])
-                    resize([lengthResize, heightResize, 0], auto=[true,true,false])
-                    linear_extrude(imgDepth)
-                    import(logoPath, center=true);
+                    logo();
             }
         }
     }
@@ -160,9 +168,16 @@ difference()
 
     // cut out the front plate so we can print it separately
     if (includeFaceplate || cutOutFaceplate)
-    translate([encWidth - wallWidth, wallWidth * 2, 0])
-        rotate([0, 0, 0])
-        facePlate(false);
+    {
+        translate([encWidth - wallWidth, wallWidth * 2, 0])
+            rotate([0, 0, 0])
+            facePlate(false);
+    }
+    else
+    {
+
+        translate([encWidth - imgDepth, encLength / 2, encHeight / 2]) logo();
+    }
 }
 
 if (includePosts)
@@ -195,9 +210,9 @@ if (includeSwitchInsert)
 translate([encWidth + 5, 0, 0])
 difference() {
     // subtract `tolerence` so it isn't a "flush" fit and will sit inside the enclosure
-    mod = (wallWidth * 2) - tolerence;
+    mod = (wallWidth * 2) + tolerence;
     insertHeight = 5;
-    supportHeight = 9;
+    supportHeight = 14;
 
     union() {
         translate([cornerCurveRadius, cornerCurveRadius, 0])
@@ -206,7 +221,7 @@ difference() {
         translate([encWidth - cornerCurveRadius - mod, cornerCurveRadius, 0])
             cylinder(supportHeight, r=cornerCurveRadius);
             
-        translate([cornerCurveRadius, facePlateLength, 0])
+        translate([cornerCurveRadius, encLength - cornerCurveRadius - mod, 0])
             cylinder(supportHeight, r=cornerCurveRadius);
             
         translate([encWidth - cornerCurveRadius - mod, encLength - cornerCurveRadius - mod, 0])
