@@ -173,9 +173,8 @@ difference()
             rotate([0, 0, 0])
             facePlate(false);
     }
-    else
+    else if (len(logoPath) > 0)
     {
-
         translate([encWidth - imgDepth, encLength / 2, encHeight / 2]) logo();
     }
 }
